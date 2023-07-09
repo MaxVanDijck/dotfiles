@@ -137,7 +137,8 @@ if [[ $(uname -s) == Darwin ]]; then # This will work unless I decide to use mac
   export PATH="$PATH:$HOME/.bin"
   source ~/.halter_core
   source ~/.halter_backend
-  # set java install to asdf
+  # use asdf for java and python
+  . /opt/homebrew/opt/asdf/libexec/asdf.sh
   . ~/.asdf/plugins/java/set-java-home.zsh
 else
   . /home/linuxbrew/.linuxbrew/opt/asdf/libexec/asdf.sh
@@ -150,3 +151,4 @@ fi
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/catppuccin_frappe.omp.json')"
 fi
+
