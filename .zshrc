@@ -131,7 +131,7 @@ pull-request ()
   gh pr create --fill --head $(git branch --show-current) && gh pr view --web
 }
 
-if [[ -z "${HALTER_USERNAME}"]]; then
+if [ -z "${HALTER_USERNAME}"]; then
   # Halter specific configuration
   export PATH="$PATH:$HOME/.bin"
   source ~/.halter_core
@@ -143,7 +143,6 @@ else
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 fi
 
 
