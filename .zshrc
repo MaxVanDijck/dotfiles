@@ -131,7 +131,8 @@ pull-request ()
   gh pr create --fill --head $(git branch --show-current) && gh pr view --web
 }
 
-if [ -z "${HALTER_USERNAME}"]; then
+
+if [[ $(uname -s) == Darwin ]]; then # This will work unless I decide to use mac as my personal computer
   # Halter specific configuration
   export PATH="$PATH:$HOME/.bin"
   source ~/.halter_core
