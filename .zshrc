@@ -1,6 +1,3 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -9,12 +6,6 @@ export ZSH="$HOME/.oh-my-zsh"
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="alanpeabody"
-
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -99,6 +90,14 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+#
+#
+
+# fzf catpuccin theme
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 
 # Extract a number of commonly used compression formats
 extract ()
@@ -131,24 +130,71 @@ pull-request ()
   gh pr create --fill --head $(git branch --show-current) && gh pr view --web
 }
 
+# alias to find Halter repos
+repo () 
+{
+ dirs=()
+ find ~/halter -type d -name "$1*" -mindepth 2 -maxdepth 2 | while read dir; do 
+    dir=$(echo $dir | cut -d'/' -f5-) # remove the prefix
+    dirs+=("$dir")
+ done
+ case ${#dirs[@]} in
+   0) echo "No Halter repository matches pattern";;
+   1) cd ~/halter/"${dirs[1]}"; clear;;
+   *) 
+     dir=$(printf '%s\n' "${dirs[@]}" | fzf --height 40% --layout=reverse --border --bind=k:up,j:down)
+     cd ~/halter/"$dir"
+     clear
+     ;;
+ esac
+}
 
-if [[ $(uname -s) == Darwin ]]; then # This will work unless I decide to use mac as my personal computer
-  # Halter specific configuration
-  export PATH="$PATH:$HOME/.bin"
-  source ~/.halter_core
-  source ~/.halter_backend
-  # use asdf for java and python
-  . /opt/homebrew/opt/asdf/libexec/asdf.sh
-  . ~/.asdf/plugins/java/set-java-home.zsh
-else
-  . /home/linuxbrew/.linuxbrew/opt/asdf/libexec/asdf.sh
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-fi
+# Start parrot security docker container and attach
+parrot() {
+ # Attach to parrot container if running
+ if [[ $(docker ps -q -f name=parrot) ]]; then
+    docker attach parrot
+    docker exec -it parrot bash
+ else
+    # If not running, start and attach to it
+    docker start parrot && docker exec -it parrot bash
+ fi
+}
+
+# Halter specific configuration
+export PATH="$PATH:$HOME/.bin"
+source ~/.halter_core
+source ~/.halter_backend
+
+# use asdf for java and python
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+. ~/.asdf/plugins/java/set-java-home.zsh
+
+
 
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-  eval "$(oh-my-posh init zsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/catppuccin_frappe.omp.json')"
+  eval "$(oh-my-posh init zsh --config '~/.config/oh-my-posh/config.omp.json')"
 fi
 
+# Attach to most recent tmux session or start tmux if there is no session
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+  tmux attach -t $(tmux list-sessions -F "#{session_id}" | head -n  1) || tmux new -s default
+fi
+
+
+
+# bun completions
+[ -s "/Users/maxvandijck/.bun/_bun" ] && source "/Users/maxvandijck/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH=$PATH:/Users/maxvandijck/.spicetify
+export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
+export PATH="/usr/local/bin:$PATH"
+# BEGIN ANSIBLE MANAGED BLOCK
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+# END ANSIBLE MANAGED BLOCK
+source ~/.nvm/nvm.sh
