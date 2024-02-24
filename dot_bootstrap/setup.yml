@@ -13,4 +13,5 @@
     - name: Install packages
       ansible.builtin.package:
         name:
+          - asdf
           - git
