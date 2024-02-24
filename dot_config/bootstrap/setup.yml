@@ -14,6 +14,8 @@
       ansible.builtin.package:
         name:
           - asdf
+          - btop
           - git
           - jq
           - ripgrep
+
