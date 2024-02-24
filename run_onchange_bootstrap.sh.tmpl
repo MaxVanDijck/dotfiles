@@ -1,5 +1,0 @@
-#!/bin/bash
-
-if command -v ansible-playbook &> /dev/null; then
-    ansible-playbook {{ joinPath .chezmoi.sourceDir "dot_config/bootstrap/setup.yml" | quote }}
-fi
