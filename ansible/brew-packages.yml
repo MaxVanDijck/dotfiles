@@ -1,0 +1,34 @@
+---
+- name: Install packages
+  hosts: localhost
+
+  tasks:
+    - name: Brew install packages
+      community.general.homebrew:
+        name:
+          - ansible
+          - asdf
+          - awscli
+          - cmake
+          - docker
+          - fd
+          - fzf
+          - gh
+          - git
+          - go
+          - oh-my-posh
+          - jq
+          - neovim
+          - node
+          - packer
+          - parallel
+          - redis
+          - ripgrep
+          - rust
+          - spotify-tui
+          - stow
+          - tldr
+          - tmate
+          - tmux
+          - zsh
+        state: present

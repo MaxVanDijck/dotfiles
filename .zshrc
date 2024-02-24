@@ -149,17 +149,19 @@ repo ()
  esac
 }
 
-# Start parrot security docker container and attach
-parrot() {
- # Attach to parrot container if running
- if [[ $(docker ps -q -f name=parrot) ]]; then
-    docker attach parrot
-    docker exec -it parrot bash
+# Start docker container and attach
+rund() {
+ # Attach to container if running
+ if [[ $(docker ps -q -f name=$1) ]]; then
+    docker attach $1
+    docker exec -it $1 bash
  else
     # If not running, start and attach to it
-    docker start parrot && docker exec -it parrot bash
+    docker start $1 && docker exec -it $1 bash
  fi
 }
+
+alias n=nvim
 
 # Halter specific configuration
 export PATH="$PATH:$HOME/.bin"
