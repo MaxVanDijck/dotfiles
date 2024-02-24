@@ -15,4 +15,5 @@
         name:
           - asdf
           - git
+          - jq
           - ripgrep
