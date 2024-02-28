@@ -17,6 +17,8 @@ require('lazy').setup({
   { import = 'custom.plugins.nvim-tree' }, -- File Tree
   { import = 'custom.plugins.filetype' }, -- Customise filetypes for highlighing and lsp
   { import = 'custom.plugins.alpha' }, -- Dashboard
+  { import = 'custom.plugins.nvim-dap' }, -- Debug Adapter Protocol
+  { import = 'custom.plugins.rustaceanvim' }, -- Everything Rust
 })
 
 -- [[ Setting options ]]
@@ -334,7 +336,8 @@ end
 -- end
 -- 
 -- -- document existing key chains
--- require('which-key').register {
+require('which-key').register {
+  ['<leader>f'] = { name = 'Find', _ = 'which_key_ignore' },
 --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
 --   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
 --   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
@@ -343,7 +346,7 @@ end
 --   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
 --   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
 --   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
--- }
+}
 -- -- register which-key VISUAL mode
 -- -- required for visual <leader>hs (hunk stage) to work
 -- require('which-key').register({
@@ -415,6 +418,7 @@ cmp.setup {
 
 vim.api.nvim_set_keymap('n', '<leader>x', ':bd<CR>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
+
 
 -- -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
