@@ -166,6 +166,10 @@ rund() {
 
 alias n=nvim
 
+clearall () {
+  tmux list-panes -s -F "#{pane_id} #{pane_current_command}" | grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox} -e zsh -e tmux | awk '{print $1}' | xargs -I{} tmux send-keys -t {} "clear" Enter
+}
+
 # Halter specific configuration
 export PATH="$PATH:$HOME/.bin"
 source ~/.halter_core

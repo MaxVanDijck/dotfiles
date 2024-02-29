@@ -416,8 +416,8 @@ cmp.setup {
    },
  }
 
-vim.api.nvim_set_keymap('n', '<leader>x', ':bd<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>x', ':bd<CR>', {noremap = true, desc="Close Buffer", silent = true})
+vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', {noremap = true, desc="Explorer", silent = true})
 
 
 -- -- The line beneath this is called `modeline`. See `:help modeline`
