@@ -1,28 +1,30 @@
 require('lazy_init')
 
 -- Configure plugins
+-- Plugins are handled in their individual files
 require('lazy').setup({
-  -- Plugins are handled in their individual files
+  -- UI elements
   { import = 'custom.plugins.catppuccin' }, -- Theme
   { import = 'custom.plugins.lualine' }, -- Statusline
+  { import = 'custom.plugins.alpha' }, -- Dashboard
+  { import = 'custom.plugins.bufferline' }, -- Tabs for Buffers
+  { import = 'custom.plugins.gitsigns' }, -- Editor Git Decorations
+  { import = 'custom.plugins.which-key' }, -- Show Keybindings
+  { import = 'custom.plugins.nvim-tree' }, -- File Tree
+
+  -- Language elements
   { import = 'custom.plugins.telescope' }, -- Fuzzyfind
   { import = 'custom.plugins.nvim-lspconfig' }, -- LSP
   { import = 'custom.plugins.nvim-cmp' }, -- Code Completion
   { import = 'custom.plugins.nvim-treesitter' }, -- Syntax Highlighting
-  { import = 'custom.plugins.bufferline' }, -- Tabs for Buffers
-  { import = 'custom.plugins.tpope' }, -- Tim Pope Magic
-  { import = 'custom.plugins.which-key' }, -- Show Keybindings
-  { import = 'custom.plugins.gitsigns' }, -- Editor Git Decorations
-  { import = 'custom.plugins.comment' }, -- Commenting Support
-  { import = 'custom.plugins.nvim-tree' }, -- File Tree
   { import = 'custom.plugins.filetype' }, -- Customise filetypes for highlighing and lsp
-  { import = 'custom.plugins.alpha' }, -- Dashboard
-  { import = 'custom.plugins.nvim-dap' }, -- Debug Adapter Protocol
   { import = 'custom.plugins.rustaceanvim' }, -- Everything Rust
+  { import = 'custom.plugins.nvim-dap' }, -- Debug Adapter Protocol
+  { import = 'custom.plugins.tpope' }, -- Tim Pope Magic
+  { import = 'custom.plugins.comment' }, -- Commenting Support
 })
 
 -- [[ Setting options ]]
--- See `:help vim.o`
 
 -- Set highlight on search
 vim.o.hlsearch = true
@@ -52,15 +54,12 @@ vim.wo.signcolumn = 'yes'
 vim.o.updatetime = 250
 vim.o.timeoutlen = 300
 
-
--- NOTE: You should make sure your terminal supports this
 -- 24 Bit color
 vim.o.termguicolors = true
 
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
--- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Remap for dealing with word wrap
@@ -68,13 +67,14 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
+-- TODO: decide weather to use this
 -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 -- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+
 -- [[ Configure Telescope ]]
--- See `:help telescope` and `:help telescope.setup()`
  require('telescope').setup {
    defaults = {
      mappings = {
@@ -89,34 +89,17 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
  pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Find File' })
-vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = 'Find Word' })
-vim.keymap.set('n', '<leader>fg', require('telescope.builtin').git_files, { desc = 'Find Git File' })
--- vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
--- vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
--- vim.keymap.set('n', '<leader>/', function()
--- You can pass additional configuration to telescope to change theme, layout, etc.
---   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
---     winblend = 10,
---     previewer = false,
---   })
--- end, { desc = '[/] Fuzzily search in current buffer' })
--- 
--- local function telescope_live_grep_open_files()
---   require('telescope.builtin').live_grep {
---     grep_open_files = true,
---     prompt_title = 'Live Grep in Open Files',
---   }
--- end
--- vim.keymap.set('n', '<leader>s/', telescope_live_grep_open_files, { desc = '[S]earch [/] in Open Files' })
--- vim.keymap.set('n', '<leader>ss', require('telescope.builtin').builtin, { desc = '[S]earch [S]elect Telescope' })
--- vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
--- vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
--- vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
--- vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
--- vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = '[F]ile' })
+vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = '[W]ord' })
+vim.keymap.set('n', '<leader>fg', require('telescope.builtin').git_files, { desc = '[G]it File' })
+vim.keymap.set('n', '<leader>fa', function() require('telescope.builtin').find_files { hidden=true, no_ignore=true, no_ignore_parent=true} end, { desc = '[A]ll files' })
+vim.keymap.set('n', '<leader>fb', require('telescope.builtin').current_buffer_fuzzy_find , { desc = 'in [B]uffer' })
+vim.keymap.set('n', '<leader>fh', require('telescope.builtin').help_tags, { desc = '[H]elp page' })
+vim.keymap.set('n', '<leader>fr', require('telescope.builtin').resume, { desc = '[R]esume previous' })
+
 
 -- Bufferline navigation 
+-- TODO: move ?
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true })
 
@@ -419,6 +402,15 @@ cmp.setup {
 vim.api.nvim_set_keymap('n', '<leader>x', ':bd<CR>', {noremap = true, desc="Close Buffer", silent = true})
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', {noremap = true, desc="Explorer", silent = true})
 
+-- :help windows split horizontally and on the right side
+vim.api.nvim_create_autocmd("WinNew", {
+    group = vim.api.nvim_create_augroup("help_window_horizontal", {}),
+    pattern = "*",
+    callback = function()
+        vim.cmd("wincmd L")
+    end
+})
 
--- -- The line beneath this is called `modeline`. See `:help modeline`
+
+-- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
