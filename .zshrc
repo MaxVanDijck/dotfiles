@@ -179,7 +179,28 @@ source ~/.halter_backend
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
 . ~/.asdf/plugins/java/set-java-home.zsh
 
+# home server commands
+max-ssh () {
+  ssh max@max-desktop
+}
 
+max-scp () {
+  server_path=$(echo $PWD | sed "s|$HOME||")
+  server_path="/home/max$server_path"
+  local_path=$(echo $PWD)
+
+  # ensure directory exists to not fail
+  ssh max@max-desktop "mkdir -p $server_path"
+
+  # Generate a list of files tracked by Git
+  git ls-files > git_files.txt
+
+  # Sync only the files listed in git_files.txt
+  rsync -av --files-from=git_files.txt "$local_path" "max@max-desktop:$server_path"
+
+  # Clean up the temporary file
+  rm git_files.txt
+}
 
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
