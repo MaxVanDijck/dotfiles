@@ -1,0 +1,138 @@
+# Configuration for Alacritty, the GPU enhanced terminal emulator
+
+# Any items in the `env` entry below will be added as
+# environment variables. Some entries may override variables
+# set by alacritty it self.
+# env:
+  # TERM env customization.
+  #
+  # If this property is not set, alacritty will set it to xterm-256color.
+  #
+  # Note that some xterm terminfo databases don't declare support for italics.
+  # You can verify this by checking for the presence of `smso` and `sitm` in
+  # `infocmp xterm-256color`.
+  # TERM: xterm-256color-italic
+
+[window]
+  # Window dimensions (changes require restart)
+  #
+  # Specified in number of columns/lines, not pixels. If both are zero this
+  # setting is ignored.
+dimensions = {columns = 0, lines= 0}
+
+  # Window padding (changes require restart)
+  #
+  # Blank space added around the window in pixels. This padding is not scaled by
+  # DPI and the specified value is always added at both opposing sides.
+# Weird padding with SimpleFullscreen mode
+padding = {x = 1, y = 0}
+dynamic_padding = false
+
+  # Spread additional padding evenly around the terminal content.
+
+  # Window decorations
+  #
+  # Available values:
+  # - full: borders and title bar
+  # - none: neither borders nor title bar
+  # - transparent: title bar, transparent background and title bar buttons
+  # - buttonless: title bar, transparent background, but no title bar buttons
+decorations = "full"
+
+  # Startup Mode (changes require restart)
+  #
+  # Values for `startup_mode`:
+  #   - Windowed
+  #   - Maximized
+  #   - Fullscreen
+  #
+  # Values for `startup_mode` (macOS only):
+  #   - SimpleFullscreen
+startup_mode = "SimpleFullscreen"
+
+opacity = 0.90
+
+[font]
+normal = { family = "JetBrainsMono Nerd Font Mono", style = "ExtraLight" }
+size = 13.5
+builtin_box_drawing = true
+
+# Use Catppuccin Mocha Palette
+[colors.primary]
+background = "#1E1E2E"
+foreground = "#CDD6F4"
+dim_foreground = "#CDD6F4"
+bright_foreground = "#CDD6F4"
+
+[colors.cursor]
+text = "#1E1E2E"
+cursor = "#F5E0DC"
+
+[colors.vi_mode_cursor]
+text = "#1E1E2E"
+cursor = "#B4BEFE"
+
+[colors.search.matches]
+foreground = "#1E1E2E"
+background = "#A6ADC8"
+
+[colors.search.focused_match]
+foreground = "#1E1E2E"
+background = "#A6E3A1"
+
+[colors.footer_bar]
+foreground = "#1E1E2E"
+background = "#A6ADC8"
+
+[colors.hints.start]
+foreground = "#1E1E2E"
+background = "#F9E2AF"
+
+[colors.hints.end]
+foreground = "#1E1E2E"
+background = "#A6ADC8"
+
+[colors.selection]
+text = "#1E1E2E"
+background = "#F5E0DC"
+
+[colors.normal]
+black = "#45475A"
+red = "#F38BA8"
+green = "#A6E3A1"
+yellow = "#F9E2AF"
+blue = "#89B4FA"
+magenta = "#F5C2E7"
+cyan = "#94E2D5"
+white = "#BAC2DE"
+
+[colors.bright]
+black = "#585B70"
+red = "#F38BA8"
+green = "#A6E3A1"
+yellow = "#F9E2AF"
+blue = "#89B4FA"
+magenta = "#F5C2E7"
+cyan = "#94E2D5"
+white = "#A6ADC8"
+
+[colors.dim]
+black = "#45475A"
+red = "#F38BA8"
+green = "#A6E3A1"
+yellow = "#F9E2AF"
+blue = "#89B4FA"
+magenta = "#F5C2E7"
+cyan = "#94E2D5"
+white = "#BAC2DE"
+
+[[colors.indexed_colors]]
+index = 16
+color = "#FAB387"
+
+[[colors.indexed_colors]]
+index = 17
+color = "#F5E0DC"
+
+[mouse]
+hide_when_typing = true
