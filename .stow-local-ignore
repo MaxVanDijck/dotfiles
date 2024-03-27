@@ -20,3 +20,5 @@ _darcs
 ^/COPYING
 
 ^/ansible/*
+
+^/images/* # readme images
