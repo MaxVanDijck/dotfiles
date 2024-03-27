@@ -175,9 +175,6 @@ export PATH="$PATH:$HOME/.bin"
 source ~/.halter_core
 source ~/.halter_backend
 
-# use asdf for java and python
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-. ~/.asdf/plugins/java/set-java-home.zsh
 
 # home server commands
 max-ssh () {
@@ -209,13 +206,13 @@ fi
 
 # Attach to most recent tmux session or start tmux if there is no session
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-  tmux attach -t $(tmux list-sessions -F "#{session_id}" | head -n  1) || tmux new -s default
+ (tmux attach -t $(tmux list-sessions -F "#{session_id}" | head -n 1) || tmux new -s default) > /dev/null 2>&1
 fi
 
 
-
-# bun completions
-[ -s "/Users/maxvandijck/.bun/_bun" ] && source "/Users/maxvandijck/.bun/_bun"
+# use asdf for java and python
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+. ~/.asdf/plugins/java/set-java-home.zsh
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -223,6 +220,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH=$PATH:/Users/maxvandijck/.spicetify
 export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
 export PATH="/usr/local/bin:$PATH"
+# bun completions
+[ -s "/Users/maxvandijck/.bun/_bun" ] && source "/Users/maxvandijck/.bun/_bun"
+
 # BEGIN ANSIBLE MANAGED BLOCK
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
