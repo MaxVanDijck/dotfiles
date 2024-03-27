@@ -1,8 +1,8 @@
-# dotfiles
+# Dotfiles
 Dotfiles and other configuration that is stored accross devices
 
 ## Setup
-First you will have to install [XCode](https://developer.apple.com/xcode) and [Brew](https://github.com/TechDufus/dotfiles/blob/main/bin/dotfiles).
+First you will have to install [XCode](https://developer.apple.com/xcode) and [Brew](https://brew.sh/).
 ```bash
 brew install ansible
 git clone git@github.com:MaxVanDijck/dotfiles.git 

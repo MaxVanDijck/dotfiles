@@ -6,6 +6,7 @@
     - name: Brew install packages
       community.general.homebrew:
         name:
+          - alacritty
           - ansible
           - asdf
           - awscli
