@@ -115,6 +115,7 @@ vim.defer_fn(function()
     ensure_installed = {
       -- most commonly used
       'python',
+      'sql',
 
       -- low level
       'c',
@@ -187,6 +188,7 @@ vim.treesitter.language.register('hcl', 'hcl_custom_tf')  -- the hcl_custom_tf f
  local servers = {
    terraformls = { filetypes = { 'tf', 'hcl_custom_tf'}, },
    tflint = { filetypes = { 'tf', 'hcl_custom_tf'}, },
+   sqlls = {filetypes = {'sql',}, },
    lua_ls = {
      Lua = {
        workspace = { checkThirdParty = false },

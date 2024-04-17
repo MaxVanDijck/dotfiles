@@ -33,6 +33,7 @@ return {
     dashboard.section.buttons.val = {
       dashboard.button("f", "󰱼   Find file", ":Telescope find_files<CR>"),
       dashboard.button("w", "   Find word", ":Telescope live_grep<CR>"),
+      dashboard.button("g", "   Git", ":tab G<CR>"),
       dashboard.button("c", "   Config", ":e $MYVIMRC <CR>"),
       dashboard.button("m", "󱌣   Mason", ":Mason<CR>"),
       dashboard.button("l", "󰒲   Lazy", ":Lazy<CR>"),
