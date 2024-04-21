@@ -103,6 +103,9 @@ vim.keymap.set('n', '<leader>fr', require('telescope.builtin').resume, { desc = 
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true })
 
+-- LSP
+vim.keymap.set('n', '<leader>lrn', vim.lsp.buf.rename, { desc = '[N]ame', noremap = true})
+
 
 
 
@@ -323,6 +326,9 @@ end
 -- -- document existing key chains
 require('which-key').register {
   ['<leader>f'] = { name = 'Find', _ = 'which_key_ignore' },
+  ['<leader>l'] = {name = 'LSP', _ = 'which_key_ignore' },
+  ['<leader>lr'] = {name = 'Refactor', _ = 'which_key_ignore' },
+
 --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
 --   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
 --   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
