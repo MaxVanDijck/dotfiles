@@ -127,12 +127,6 @@ extract ()
   fi
 }
 
-# Open a pull-request into the main/master branch and open in browser
-pull-request ()
-{
-  gh pr create --fill --head $(git branch --show-current) && gh pr view --web
-}
-
 # alias to find Halter repos
 repo () 
 {
@@ -223,8 +217,4 @@ export PATH="/usr/local/bin:$PATH"
 # bun completions
 [ -s "/Users/maxvandijck/.bun/_bun" ] && source "/Users/maxvandijck/.bun/_bun"
 
-# BEGIN ANSIBLE MANAGED BLOCK
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-# END ANSIBLE MANAGED BLOCK
 source ~/.nvm/nvm.sh

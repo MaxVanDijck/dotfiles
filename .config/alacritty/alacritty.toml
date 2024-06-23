@@ -50,7 +50,7 @@ decorations = "transparent"
   #   - SimpleFullscreen
 startup_mode = "SimpleFullscreen"
 
-opacity = 0.85
+opacity = 0.95
 
 [font]
 normal = { family = "JetBrainsMono Nerd Font Mono", style = "ExtraLight" }
@@ -59,7 +59,7 @@ builtin_box_drawing = true
 
 # Use Catppuccin Mocha Palette
 [colors.primary]
-background = "#1E1E2E"
+background = "#1b1b1b"
 foreground = "#CDD6F4"
 dim_foreground = "#CDD6F4"
 bright_foreground = "#CDD6F4"

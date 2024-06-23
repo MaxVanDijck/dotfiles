@@ -1,27 +1,17 @@
-require('lazy_init')
+-- Set <space> as the leader key
+-- Must happen before plugins are required (otherwise wrong leader will be used)
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
+-- disable netrw for nvimtree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+require('lazy_init')
 -- Configure plugins
 -- Plugins are handled in their individual files
 require('lazy').setup({
-  -- UI elements
-  { import = 'custom.plugins.catppuccin' }, -- Theme
-  { import = 'custom.plugins.lualine' }, -- Statusline
-  { import = 'custom.plugins.alpha' }, -- Dashboard
-  { import = 'custom.plugins.bufferline' }, -- Tabs for Buffers
-  { import = 'custom.plugins.gitsigns' }, -- Editor Git Decorations
-  { import = 'custom.plugins.which-key' }, -- Show Keybindings
-  { import = 'custom.plugins.nvim-tree' }, -- File Tree
-
-  -- Language elements
-  { import = 'custom.plugins.telescope' }, -- Fuzzyfind
-  { import = 'custom.plugins.nvim-lspconfig' }, -- LSP
-  { import = 'custom.plugins.nvim-cmp' }, -- Code Completion
-  { import = 'custom.plugins.nvim-treesitter' }, -- Syntax Highlighting
-  { import = 'custom.plugins.filetype' }, -- Customise filetypes for highlighing and lsp
-  { import = 'custom.plugins.rustaceanvim' }, -- Everything Rust
-  { import = 'custom.plugins.nvim-dap' }, -- Debug Adapter Protocol
-  { import = 'custom.plugins.tpope' }, -- Tim Pope Magic
-  { import = 'custom.plugins.comment' }, -- Commenting Support
+  import = "custom/plugins"
 })
 
 -- [[ Setting options ]]
@@ -51,7 +41,7 @@ vim.o.smartcase = true
 vim.wo.signcolumn = 'yes'
 
 -- Decrease update time
-vim.o.updatetime = 250
+vim.o.updatetime = 750
 vim.o.timeoutlen = 300
 
 -- 24 Bit color
@@ -66,6 +56,12 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- Keymaps for switching between split panes
+vim.keymap.set('n', '<c-h>', ':wincmd h<CR>', { silent = true })
+vim.keymap.set('n', '<c-j>', ':wincmd j<CR>', { silent = true })
+vim.keymap.set('n', '<c-k>', ':wincmd k<CR>', { silent = true })
+vim.keymap.set('n', '<c-l>', ':wincmd l<CR>', { silent = true })
+
 -- Diagnostic keymaps
 -- TODO: decide weather to use this
 -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
@@ -75,7 +71,7 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 
 
 -- [[ Configure Telescope ]]
- require('telescope').setup {
+require('telescope').setup {
    defaults = {
      mappings = {
        i = {
@@ -85,8 +81,9 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
      },
    },
  }
+
 -- Enable telescope fzf native, if installed
- pcall(require('telescope').load_extension, 'fzf')
+pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = '[F]ile' })
@@ -98,8 +95,7 @@ vim.keymap.set('n', '<leader>fh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>fr', require('telescope.builtin').resume, { desc = '[R]esume previous' })
 
 
--- Bufferline navigation 
--- TODO: move ?
+-- [[ Configure Bufferline ]]
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true })
 
@@ -192,6 +188,7 @@ vim.treesitter.language.register('hcl', 'hcl_custom_tf')  -- the hcl_custom_tf f
    terraformls = { filetypes = { 'tf', 'hcl_custom_tf'}, },
    tflint = { filetypes = { 'tf', 'hcl_custom_tf'}, },
    sqlls = {filetypes = {'sql',}, },
+   kotlin_language_server = {},
    lua_ls = {
      Lua = {
        workspace = { checkThirdParty = false },
@@ -238,6 +235,13 @@ end
      }
    end,
  }
+
+require'lspconfig'.tsserver.setup {
+  cmd = { "typescript-language-server", "--stdio" },
+  filetypes = { "typescript", "typescriptreact", "html", "vue", "javascript", "javascriptreact" },
+  root_dir = require'lspconfig'.util.root_pattern(".git", "package.json", "tsconfig.json"),
+  settings = {}
+}
 --
 --     textobjects = {
 --       select = {

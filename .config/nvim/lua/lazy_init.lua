@@ -1,13 +1,3 @@
--- Set <space> as the leader key
--- Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
--- disable netrw for nvimtree
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-
-
 -- Install `lazy.nvim` plugin manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -15,8 +5,8 @@ if not vim.loop.fs_stat(lazypath) then
     'git',
     'clone',
     '--filter=blob:none',
-    'https://github.com/folke/lazy.nvim.git',
     '--branch=stable', -- latest stable release
+    'https://github.com/folke/lazy.nvim.git',
     lazypath,
   }
 end
