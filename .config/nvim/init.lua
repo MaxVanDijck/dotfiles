@@ -411,7 +411,20 @@ cmp.setup {
    },
  }
 
-vim.api.nvim_set_keymap('n', '<leader>x', ':bd<CR>', {noremap = true, desc="Close Buffer", silent = true})
+function CloseBuffer()
+  local bufs = vim.fn.getbufinfo({buflisted = 1})
+  -- If last buffer then open Alpha dashboard
+  if #bufs == 1 then
+    local last_buf = vim.fn.bufnr('%')
+    vim.cmd('Alpha')
+    vim.cmd('bd!' .. last_buf)
+  elseif #bufs == 0 then -- If no buffers, only dashboard, stay on dashboard
+  else
+    vim.cmd('bd')
+  end
+end
+
+vim.api.nvim_set_keymap('n', '<leader>x', '[[<cmd>lua CloseBuffer()<CR>]]', {noremap = true, desc="Close Buffer", silent = true})
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', {noremap = true, desc="Explorer", silent = true})
 
 -- :help windows split horizontally and on the right side
