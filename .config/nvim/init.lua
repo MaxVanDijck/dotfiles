@@ -236,12 +236,6 @@ end
    end,
  }
 
-require'lspconfig'.tsserver.setup {
-  cmd = { "typescript-language-server", "--stdio" },
-  filetypes = { "typescript", "typescriptreact", "html", "vue", "javascript", "javascriptreact" },
-  root_dir = require'lspconfig'.util.root_pattern(".git", "package.json", "tsconfig.json"),
-  settings = {}
-}
 --
 --     textobjects = {
 --       select = {
@@ -328,10 +322,13 @@ require'lspconfig'.tsserver.setup {
 -- end
 -- 
 -- -- document existing key chains
-require('which-key').register {
-  ['<leader>f'] = { name = 'Find', _ = 'which_key_ignore' },
-  ['<leader>l'] = {name = 'LSP', _ = 'which_key_ignore' },
-  ['<leader>lr'] = {name = 'Refactor', _ = 'which_key_ignore' },
+require('which-key').add({
+    { "<leader>f", group = "Find" },
+    { "<leader>f_", hidden = true },
+    { "<leader>l", group = "LSP" },
+    { "<leader>l_", hidden = true },
+    { "<leader>lr", group = "Refactor" },
+    { "<leader>lr_", hidden = true },
 
 --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
 --   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
@@ -341,7 +338,7 @@ require('which-key').register {
 --   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
 --   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
 --   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-}
+})
 -- -- register which-key VISUAL mode
 -- -- required for visual <leader>hs (hunk stage) to work
 -- require('which-key').register({

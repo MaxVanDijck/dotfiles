@@ -169,6 +169,55 @@ export PATH="$PATH:$HOME/.bin"
 source ~/.halter_core
 source ~/.halter_backend
 
+# create predefined tmux sessions in a personal or halter directory
+cns () {
+  if [[ $# -eq 1 ]]; then
+   dirs=()
+   find ~/halter -type d -name "$1*" -mindepth 2 -maxdepth 2 | while read dir; do 
+      dir=$(echo $dir | cut -d'/' -f5-) # remove the prefix
+      dirs+=("$dir")
+   done
+   case ${#dirs[@]} in
+     0) echo "No Halter repository matches pattern";;
+     1) selected=~/halter/"${dirs[1]}";;
+     *) 
+       dir=$(printf '%s\n' "${dirs[@]}" | fzf --height 40% --layout=reverse --border --bind=k:up,j:down)
+       selected=~/halter/"$dir"
+       ;;
+   esac
+  else
+    selected=$({ find ~/halter -type d -mindepth 2 -maxdepth 2; find ~/max -type d -mindepth 1 -maxdepth 1; find ~/halter/platform/concourse -type d -mindepth 1 -maxdepth 1} | fzf)
+  fi
+
+
+  base_directory=$(basename "$selected")
+
+
+  # check if the session exists
+  if tmux has-session -t "$base_directory" 2>/dev/null; then
+    # switch to the existing session
+    tmux switch -t "$base_directory:0.0" > /dev/null 2>&1
+  else
+    # create a new session if it doesn't exist
+    tmux new-session -d -s "$base_directory" -c "$selected" > /dev/null 2>&1
+
+    # create second window
+    tmux new-window -d -t "$base_directory:1" -c "$selected" > /dev/null 2>&1
+
+    # split the first window horizontally
+    tmux split-window -h -t "$base_directory:1" -c "$selected" > /dev/null 2>&1
+
+    # split the first window horizontally
+    tmux split-window -v -t "$base_directory:1.1" -c "$selected" > /dev/null 2>&1
+
+    # switch to created session
+    tmux switch -t "$base_directory:1.0"
+
+    # send keys to the first window to start nvim
+    tmux send-keys -t "$base_directory:0.0" "nvim" c-m > /dev/null 2>&1
+  fi
+}
+
 
 # home server commands
 max-ssh () {
@@ -192,7 +241,6 @@ max-scp () {
   # Clean up the temporary file
   rm git_files.txt
 }
-
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config '~/.config/oh-my-posh/config.omp.json')"
