@@ -425,13 +425,13 @@ vim.api.nvim_set_keymap('n', '<leader>x', '[[<cmd>lua CloseBuffer()<CR>]]', {nor
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', {noremap = true, desc="Explorer", silent = true})
 
 -- :help windows split horizontally and on the right side
-vim.api.nvim_create_autocmd("WinNew", {
-    group = vim.api.nvim_create_augroup("help_window_horizontal", {}),
-    pattern = "*",
-    callback = function()
-        vim.cmd("wincmd L")
-    end
-})
+-- vim.api.nvim_create_autocmd("WinNew", {
+--     group = vim.api.nvim_create_augroup("help_window_horizontal", {}),
+--     pattern = "*",
+--     callback = function()
+--         vim.cmd("wincmd L")
+--     end
+-- })
 
 
 -- The line beneath this is called `modeline`. See `:help modeline`

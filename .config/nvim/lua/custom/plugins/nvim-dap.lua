@@ -4,12 +4,32 @@ return {
 
     dependencies = {
         -- python
-        'mfussenegger/nvim-dap-python'
+        'mfussenegger/nvim-dap-python',
+        'nvim-neotest/nvim-nio',
+        'rcarriga/nvim-dap-ui'
     },
     lazy = false,
     config = function()
       local dap = require('dap')
-    require('dap-python').setup('python')
+      local dapui = require('dapui')
+
+      require('dapui').setup()
+      require('dap-python').setup('python')
+
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+
+
         dap.adapters.lldb = {
             type = "executable",
             command = "/usr/bin/lldb", -- adjust as needed

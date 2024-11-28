@@ -68,6 +68,11 @@ local config = {
       normal = { c = { bg = color.surface0 } },
       inactive = { c = { bg = color.surface0 } },
     },
+    disabled_filetypes = {
+      "dapui_watches", "dapui_breakpoints",
+      "dapui_scopes", "dapui_console",
+      "dapui_stacks", "dap-repl"
+    }
   },
   sections = {
     -- these are to remove the defaults
@@ -228,6 +233,7 @@ ins_right {
 	'progress', 
 	color = { fg = color.fg, gui = 'bold' } 
 }
+
 
 lualine.setup(config)
 end
