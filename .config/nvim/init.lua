@@ -67,20 +67,20 @@ vim.keymap.set('n', '<c-l>', ':wincmd l<CR>', { silent = true })
 -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 -- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 
 -- [[ Configure Telescope ]]
 require('telescope').setup {
-   defaults = {
-     mappings = {
-       i = {
-         ['<C-u>'] = false,
-         ['<C-d>'] = false,
-       },
-     },
-   },
- }
+  defaults = {
+    mappings = {
+      i = {
+        ['<C-u>'] = false,
+        ['<C-d>'] = false,
+      },
+    },
+  },
+}
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
@@ -89,8 +89,10 @@ pcall(require('telescope').load_extension, 'fzf')
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = '[F]ile' })
 vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = '[W]ord' })
 vim.keymap.set('n', '<leader>fg', require('telescope.builtin').git_files, { desc = '[G]it File' })
-vim.keymap.set('n', '<leader>fa', function() require('telescope.builtin').find_files { hidden=true, no_ignore=true, no_ignore_parent=true} end, { desc = '[A]ll files' })
-vim.keymap.set('n', '<leader>fb', require('telescope.builtin').current_buffer_fuzzy_find , { desc = 'in [B]uffer' })
+vim.keymap.set('n', '<leader>fa',
+  function() require('telescope.builtin').find_files { hidden = true, no_ignore = true, no_ignore_parent = true } end,
+  { desc = '[A]ll files' })
+vim.keymap.set('n', '<leader>fb', require('telescope.builtin').current_buffer_fuzzy_find, { desc = 'in [B]uffer' })
 vim.keymap.set('n', '<leader>fh', require('telescope.builtin').help_tags, { desc = '[H]elp page' })
 vim.keymap.set('n', '<leader>fr', require('telescope.builtin').resume, { desc = '[R]esume previous' })
 
@@ -100,7 +102,7 @@ vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true })
 
 -- LSP
-vim.keymap.set('n', '<leader>lrn', vim.lsp.buf.rename, { desc = '[N]ame', noremap = true})
+vim.keymap.set('n', '<leader>lrn', vim.lsp.buf.rename, { desc = '[N]ame', noremap = true })
 
 
 
@@ -112,10 +114,6 @@ vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = {
-      -- most commonly used
-      'python',
-      'sql',
-
       -- low level
       'c',
       'cpp',
@@ -131,8 +129,10 @@ vim.defer_fn(function()
       'tsx',
       'javascript',
       'css',
+      'python',
 
       -- utility
+      'sql',
       'bash',
       'cmake',
       'make',
@@ -149,65 +149,73 @@ vim.defer_fn(function()
       'lua',
       'vimdoc',
       'vim',
-
     },
 
-     highlight = { enable = true },
-     indent = { enable = true },
-     incremental_selection = {
-       enable = true,
-       keymaps = {
-         init_selection = '<c-space>',
-         node_incremental = '<c-space>',
-         scope_incremental = '<c-s>',
-         node_decremental = '<M-space>',
-       },
-     },
+    highlight = { enable = true },
+    indent = { enable = true },
+    incremental_selection = {
+      enable = true,
+      keymaps = {
+        init_selection = '<c-space>',
+        node_incremental = '<c-space>',
+        scope_incremental = '<c-s>',
+        node_decremental = '<M-space>',
+      },
+    },
   }
 
-vim.treesitter.language.register('hcl', 'hcl_custom_tf')  -- the hcl_custom_tf filetype will use the hcl parser and queries.
+  vim.treesitter.language.register('hcl', 'tf') -- the hcl_custom_tf filetype will use the hcl parser and queries.
+end, 0)
 
-  end, 0)
-
+-- mason-lspconfig requires that these setup functions are called in this order
+-- before setting up the servers.
+require('mason').setup()
+require('mason-lspconfig').setup()
+-- Enable the following language servers
+--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
+--  Add any additional override configuration in the following tables. They will be passed to
+--  the `settings` field of the server config. You must look up that documentation yourself.
 --
---
- -- mason-lspconfig requires that these setup functions are called in this order
- -- before setting up the servers.
- require('mason').setup()
- require('mason-lspconfig').setup()
- -- Enable the following language servers
- --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
- --
- --  Add any additional override configuration in the following tables. They will be passed to
- --  the `settings` field of the server config. You must look up that documentation yourself.
- --
- --  If you want to override the default filetypes that your language server will attach to you can
- --  define the property 'filetypes' to the map in question.
- local servers = {
-   terraformls = { filetypes = { 'tf', 'hcl_custom_tf'}, },
-   tflint = { filetypes = { 'tf', 'hcl_custom_tf'}, },
-   sqlls = {filetypes = {'sql',}, },
-   kotlin_language_server = {},
-   lua_ls = {
-     Lua = {
-       workspace = { checkThirdParty = false },
-       telemetry = { enable = false },
-       diagnostics = {
-         -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-         -- disable = { 'missing-fields' },
-         globals = {'vim'},
-        },
-     },
-   },
- }
+--  If you want to override the default filetypes that your language server will attach to you can
+--  define the property 'filetypes' to the map in question.
+vim.filetype.add {
+  pattern = {
+    ['openapi.*%.ya?ml'] = 'yaml.openapi',
+    ['openapi.*%.json'] = 'json.openapi',
+  },
+}
+local servers = {
+  terraformls = { filetypes = { 'tf', 'terraform' }, },
+  vacuum = {
+    cmd = { 'vacuum', 'language-server' }, filetypes = { 'yml' },
+  },
+  sqlls = { filetypes = { 'sql', }, },
+  kotlin_lsp = {},
+  lua_ls = {
+    Lua = {
+      workspace = { checkThirdParty = false },
+      telemetry = { enable = false },
+      diagnostics = {
+        -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+        -- disable = { 'missing-fields' },
+        globals = { 'vim' },
+      },
+    },
+  },
+  tsserver = {
+    filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+    root_dir = require("lspconfig.util").root_pattern("tsconfig.json", "package.json", ".git"),
+    settings = {}, -- no specific tsserver settings needed for alias support
+  },
+}
 
 
 local mason_lspconfig = require 'mason-lspconfig'
--- 
- mason_lspconfig.setup {
-   ensure_installed = vim.tbl_keys(servers),
- }
+--
+mason_lspconfig.setup {
+  ensure_installed = vim.tbl_keys(servers),
+}
 
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -215,26 +223,26 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 
 local on_attach = function(_, bufnr)
-   local nmap = function(keys, func, desc)
-     if desc then
-       desc = 'LSP: ' .. desc
-     end
-     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-   end
-   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  local nmap = function(keys, func, desc)
+    if desc then
+      desc = 'LSP: ' .. desc
+    end
+    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+  end
+  nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 end
 
- mason_lspconfig.setup_handlers {
-   function(server_name)
-     require('lspconfig')[server_name].setup {
-       capabilities = capabilities,
-       on_attach = on_attach,
-       settings = servers[server_name],
-       filetypes = (servers[server_name] or {}).filetypes,
-     }
-   end,
- }
+mason_lspconfig.setup_handlers {
+  function(server_name)
+    require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = servers[server_name],
+      filetypes = (servers[server_name] or {}).filetypes,
+    }
+  end,
+}
 
 --
 --     textobjects = {
@@ -283,7 +291,7 @@ end
 --     },
 --   }
 -- end, 0)
--- 
+--
 -- -- [[ Configure LSP ]]
 -- --  This function gets run when an LSP connects to a particular buffer.
 --   -- NOTE: Remember that lua is a real programming language, and as such it is possible
@@ -292,21 +300,21 @@ end
 --   --
 --   -- In this case, we create a function that lets us more easily define mappings specific
 --   -- for LSP related items. It sets the mode, buffer and description for us each time.
--- 
+--
 --   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 --   nmap('<leader>ca', function()
 --     vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
 --   end, '[C]ode [A]ction')
--- 
+--
 --   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 --   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
 --   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
 --   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
--- 
+--
 --   -- See `:help K` for why this keymap
 --   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
 --   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
--- 
+--
 --   -- Lesser used LSP functionality
 --   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 --   nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
@@ -314,30 +322,30 @@ end
 --   nmap('<leader>wl', function()
 --     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 --   end, '[W]orkspace [L]ist Folders')
--- 
+--
 --   -- Create a command `:Format` local to the LSP buffer
 --   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
 --     vim.lsp.buf.format()
 --   end, { desc = 'Format current buffer with LSP' })
 -- end
--- 
+--
 -- -- document existing key chains
 require('which-key').add({
-    { "<leader>f", group = "Find" },
-    { "<leader>f_", hidden = true },
-    { "<leader>l", group = "LSP" },
-    { "<leader>l_", hidden = true },
-    { "<leader>lr", group = "Refactor" },
-    { "<leader>lr_", hidden = true },
+  { "<leader>f",   group = "Find" },
+  { "<leader>f_",  hidden = true },
+  { "<leader>l",   group = "LSP" },
+  { "<leader>l_",  hidden = true },
+  { "<leader>lr",  group = "Refactor" },
+  { "<leader>lr_", hidden = true },
 
---   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
---   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
---   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
---   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
---   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
---   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
---   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
---   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
+  --   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+  --   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
+  --   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+  --   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
+  --   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+  --   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
+  --   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
 })
 -- -- register which-key VISUAL mode
 -- -- required for visual <leader>hs (hunk stage) to work
@@ -345,71 +353,83 @@ require('which-key').add({
 --   ['<leader>'] = { name = 'VISUAL <leader>' },
 --   ['<leader>h'] = { 'Git [H]unk' },
 -- }, { mode = 'v' })
--- 
--- 
+--
+--
 -- -- Setup neovim lua configuration
 -- require('neodev').setup()
--- 
--- 
+--
+--
 -- -- Ensure the servers above are installed
--- 
+--
 -- -- [[ Configure nvim-cmp ]]
 -- -- See `:help cmp`
 local cmp = require('cmp')
- local luasnip = require 'luasnip'
- require('luasnip.loaders.from_vscode').lazy_load()
- luasnip.config.setup {}
--- 
+local luasnip = require 'luasnip'
+require('luasnip.loaders.from_vscode').lazy_load()
+luasnip.config.setup {
+}
+--
 cmp.setup {
-    window = {
-      documentation = cmp.config.disable
+  window = {
+    documentation = cmp.config.disable
+  },
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  completion = {
+    completeopt = 'menu,menuone,noinsert',
+  },
+  mapping = cmp.mapping.preset.insert {
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete {},
+    ['<CR>'] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
     },
- snippet = {
-     expand = function(args)
-       luasnip.lsp_expand(args.body)
-     end,
-   },
-   completion = {
-     completeopt = 'menu,menuone,noinsert',
-   },
-   mapping = cmp.mapping.preset.insert {
-     ['<C-n>'] = cmp.mapping.select_next_item(),
-     ['<C-p>'] = cmp.mapping.select_prev_item(),
-     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-     ['<C-Space>'] = cmp.mapping.complete {},
-     ['<CR>'] = cmp.mapping.confirm {
-       behavior = cmp.ConfirmBehavior.Replace,
-       select = true,
-     },
-     ['<Tab>'] = cmp.mapping(function(fallback)
-       if cmp.visible() then
-         cmp.select_next_item()
-       elseif luasnip.expand_or_locally_jumpable() then
-         luasnip.expand_or_jump()
-       else
-         fallback()
-       end
-     end, { 'i', 's' }),
-     ['<S-Tab>'] = cmp.mapping(function(fallback)
-       if cmp.visible() then
-         cmp.select_prev_item()
-       elseif luasnip.locally_jumpable(-1) then
-         luasnip.jump(-1)
-       else
-         fallback()
-       end
-     end, { 'i', 's' }),
-   },
-   sources = {
-     { name = 'nvim_lsp' },
-     { name = 'luasnip' },
-     { name = 'path' },
-   },
- }
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.expand_or_locally_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.locally_jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+  },
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+    { name = 'path' },
+  },
+}
+
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+  pattern = {
+    "*.tf",
+    "*.tfvars",
+    "*.lua",
+  },
+  callback = function()
+    vim.lsp.buf.format()
+  end,
+})
 
 function CloseBuffer()
-  local bufs = vim.fn.getbufinfo({buflisted = 1})
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
   -- If last buffer then open Alpha dashboard
   if #bufs == 1 then
     local last_buf = vim.fn.bufnr('%')
@@ -421,8 +441,9 @@ function CloseBuffer()
   end
 end
 
-vim.api.nvim_set_keymap('n', '<leader>x', '[[<cmd>lua CloseBuffer()<CR>]]', {noremap = true, desc="Close Buffer", silent = true})
-vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', {noremap = true, desc="Explorer", silent = true})
+vim.api.nvim_set_keymap('n', '<leader>x', '[[<cmd>lua CloseBuffer()<CR>]]',
+  { noremap = true, desc = "Close Buffer", silent = true })
+vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', { noremap = true, desc = "Explorer", silent = true })
 
 -- :help windows split horizontally and on the right side
 -- vim.api.nvim_create_autocmd("WinNew", {

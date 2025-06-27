@@ -212,9 +212,6 @@ cns () {
 
     # switch to created session
     tmux switch -t "$base_directory:1.0"
-
-    # send keys to the first window to start nvim
-    tmux send-keys -t "$base_directory:0.0" "nvim" c-m > /dev/null 2>&1
   fi
 }
 
@@ -256,6 +253,9 @@ fi
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
 . ~/.asdf/plugins/java/set-java-home.zsh
 
+# tell uv not to install apple-silicon incompatible versions of python
+export SYSTEM_VERSION_COMPAT=0
+
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
@@ -266,3 +266,9 @@ export PATH="/usr/local/bin:$PATH"
 [ -s "/Users/maxvandijck/.bun/_bun" ] && source "/Users/maxvandijck/.bun/_bun"
 
 source ~/.nvm/nvm.sh
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/maxvandijck/.lmstudio/bin"
+
+. "$HOME/.local/bin/env"
