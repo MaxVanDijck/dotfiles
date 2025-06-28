@@ -19,6 +19,22 @@ require('lazy').setup({
 -- Set highlight on search
 vim.o.hlsearch = true
 
+-- Create a user command to show LSP info
+vim.api.nvim_create_user_command('LspInfo', function()
+  local buf = vim.api.nvim_get_current_buf()
+  local clients = vim.lsp.get_active_clients({ bufnr = buf })
+
+  if #clients == 0 then
+    print("No LSP clients attached to this buffer")
+    return
+  end
+
+  for _, client in ipairs(clients) do
+    print(string.format("LSP: %s (id: %d)", client.name, client.id))
+    print(string.format("Root dir: %s", client.config.root_dir or "not set"))
+  end
+end, {})
+
 -- Make line numbers default
 vim.wo.number = true
 vim.wo.relativenumber = true
@@ -96,15 +112,17 @@ vim.keymap.set('n', '<leader>fb', require('telescope.builtin').current_buffer_fu
 vim.keymap.set('n', '<leader>fh', require('telescope.builtin').help_tags, { desc = '[H]elp page' })
 vim.keymap.set('n', '<leader>fr', require('telescope.builtin').resume, { desc = '[R]esume previous' })
 
+-- LSP
+vim.keymap.set('n', 'gd', require('telescope.builtin').lsp_definitions,
+  { buffer = bufnr, desc = 'LSP: [G]oto [D]efinition' })
+vim.keymap.set('n', 'gr', require('telescope.builtin').lsp_references,
+  { buffer = bufnr, desc = 'LSP: [G]oto [R]eferences' })
+vim.keymap.set('n', '<leader>lrn', vim.lsp.buf.rename, { desc = '[N]ame', noremap = true })
+
 
 -- [[ Configure Bufferline ]]
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true })
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true })
-
--- LSP
-vim.keymap.set('n', '<leader>lrn', vim.lsp.buf.rename, { desc = '[N]ame', noremap = true })
-
-
 
 
 -- [[ Configure Treesitter ]]
@@ -163,14 +181,12 @@ vim.defer_fn(function()
       },
     },
   }
-
-  vim.treesitter.language.register('hcl', 'tf') -- the hcl_custom_tf filetype will use the hcl parser and queries.
 end, 0)
 
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
 require('mason').setup()
-require('mason-lspconfig').setup()
+
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
@@ -179,72 +195,67 @@ require('mason-lspconfig').setup()
 --
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
-vim.filetype.add {
-  pattern = {
-    ['openapi.*%.ya?ml'] = 'yaml.openapi',
-    ['openapi.*%.json'] = 'json.openapi',
-  },
-}
+
 local servers = {
-  terraformls = { filetypes = { 'tf', 'terraform' }, },
-  vacuum = {
-    cmd = { 'vacuum', 'language-server' }, filetypes = { 'yml' },
-  },
-  sqlls = { filetypes = { 'sql', }, },
-  kotlin_lsp = {},
+  rust_analyzer = {},
+  pyright = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
       diagnostics = {
-        -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-        -- disable = { 'missing-fields' },
+        -- ignore Lua_LS's noisy `missing-fields` warnings
+        disable = { 'missing-fields' },
         globals = { 'vim' },
       },
     },
   },
-  tsserver = {
+  terraformls = {
+    cmd = { "terraform-ls", "serve" },
+    filetypes = { 'terraform', 'terraform-vars' },
+    root_markers = { ".terraform", ".git", "terraform/" },
+    root_dir = function(fname)
+      -- Check if file is in a terraform/ directory
+      local terraform_dir = vim.fn.fnamemodify(fname, ':p:h:s?.*terraform/??')
+      if terraform_dir ~= vim.fn.fnamemodify(fname, ':p:h') then
+        return vim.fn.fnamemodify(fname, ':p:h:s?/terraform/.*??') .. '/terraform'
+      end
+      -- Fallback to default root markers
+      return require('lspconfig.util').root_pattern('.terraform', '.git')(fname)
+    end,
+  },
+  sqlls = { filetypes = { 'sql', }, },
+  ts_ls = {
     filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
-    root_dir = require("lspconfig.util").root_pattern("tsconfig.json", "package.json", ".git"),
-    settings = {}, -- no specific tsserver settings needed for alias support
+  },
+  vacuum = {
+    cmd = { 'vacuum', 'language-server' },
+    filetypes = { 'yaml.openapi' },
   },
 }
-
-
-local mason_lspconfig = require 'mason-lspconfig'
---
-mason_lspconfig.setup {
-  ensure_installed = vim.tbl_keys(servers),
-}
-
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 
-local on_attach = function(_, bufnr)
-  local nmap = function(keys, func, desc)
-    if desc then
-      desc = 'LSP: ' .. desc
-    end
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-  end
-  nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-end
-
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-    }
-  end,
+require('mason-lspconfig').setup {
+  ensure_installed = vim.tbl_keys(servers),
 }
 
---
+-- Configure LSP servers using vim.lsp.enable()
+for server_name, config in pairs(servers) do
+  vim.lsp.enable(server_name, {
+    capabilities = capabilities,
+    settings = config,
+    filetypes = config.filetypes,
+  })
+end
+
+
+vim.g.fugitive_open_cmd = 'edit'
+
+
+
 --     textobjects = {
 --       select = {
 --         enable = true,
@@ -416,6 +427,10 @@ cmp.setup {
     { name = 'path' },
   },
 }
+
+vim.api.nvim_create_user_command('G', function()
+  vim.cmd('Ge:')
+end, {})
 
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   pattern = {
