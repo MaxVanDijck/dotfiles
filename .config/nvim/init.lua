@@ -428,9 +428,16 @@ cmp.setup {
   },
 }
 
-vim.api.nvim_create_user_command('G', function()
-  vim.cmd('Ge:')
-end, {})
+vim.api.nvim_create_user_command('G', function(opts)
+  if opts.args == "" then
+    vim.cmd('Ge:')
+  else
+    vim.cmd('Git ' .. opts.args)
+  end
+end, {
+  nargs = '*',
+  complete = 'file',
+})
 
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   pattern = {
