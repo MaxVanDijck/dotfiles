@@ -54,7 +54,7 @@ opacity = 0.95
 
 [font]
 normal = { family = "JetBrainsMono Nerd Font Mono", style = "ExtraLight" }
-size = 13.5
+size = 14
 builtin_box_drawing = true
 
 # Use Catppuccin Mocha Palette

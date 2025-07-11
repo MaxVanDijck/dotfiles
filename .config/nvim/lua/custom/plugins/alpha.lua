@@ -9,19 +9,13 @@ return {
     local alpha = require("alpha")
     local dashboard = require("alpha.themes.dashboard")
 
-    dashboard.section.header.val = {
-      [[                                                                       ]],
-      [[                                                                     ]],
-      [[       ████ ██████           █████      ██                     ]],
-      [[      ███████████             █████                             ]],
-      [[      █████████ ███████████████████ ███   ███████████   ]],
-      [[     █████████  ███    █████████████ █████ ██████████████   ]],
-      [[    █████████ ██████████ █████████ █████ █████ ████ █████   ]],
-      [[  ███████████ ███    ███ █████████ █████ █████ ████ █████  ]],
-      [[ ██████  █████████████████████ ████ █████ █████ ████ ██████ ]],
-      [[                                                                       ]],
-      [[                                                                       ]],
-    }
+    -- Add vertical buffering at the top
+    local header_padding = math.floor(vim.fn.winheight(0) * 0.2)
+    local padding_lines = {}
+    for i = 1, header_padding do
+      table.insert(padding_lines, "")
+    end
+    dashboard.section.header.val = padding_lines
 
     _Gopts = {
       position = "center",
