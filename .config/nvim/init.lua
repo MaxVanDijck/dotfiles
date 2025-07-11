@@ -451,20 +451,32 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 })
 
 function CloseBuffer()
-  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
-  -- If last buffer then open Alpha dashboard
-  if #bufs == 1 then
-    local last_buf = vim.fn.bufnr('%')
+  -- Check if we're already on Alpha dashboard
+  if vim.bo.filetype == 'alpha' then
+    return -- Do nothing if already on Alpha
+  end
+
+  -- Simple approach: just execute the same command that works manually
+  local ok, err = pcall(function()
+    vim.cmd('bp | bd #')
+  end)
+
+  -- If that fails (e.g., no previous buffer), fall back to Alpha
+  if not ok then
     vim.cmd('Alpha')
-    vim.cmd('bd!' .. last_buf)
-  elseif #bufs == 0 then -- If no buffers, only dashboard, stay on dashboard
-  else
-    vim.cmd('bd')
+    -- Force close any remaining buffer to clear bufferline
+    vim.schedule(function()
+      local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+      for _, buf in ipairs(bufs) do
+        if buf.name ~= '' then -- Don't close unnamed buffers
+          vim.cmd('bd! ' .. buf.bufnr)
+        end
+      end
+    end)
   end
 end
 
-vim.api.nvim_set_keymap('n', '<leader>x', '[[<cmd>lua CloseBuffer()<CR>]]',
-  { noremap = true, desc = "Close Buffer", silent = true })
+vim.keymap.set('n', '<leader>x', CloseBuffer, { desc = "Close Buffer" })
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', { noremap = true, desc = "Explorer", silent = true })
 
 -- :help windows split horizontally and on the right side
