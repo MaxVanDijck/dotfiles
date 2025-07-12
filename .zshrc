@@ -16,14 +16,17 @@ ZSH_THEME="alanpeabody"
 
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
-zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+# zstyle ':omz:update' mode auto      # update automatically without asking
+zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
 zstyle ':omz:update' frequency 14
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
+DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable warnings for insecure completion-dependent directories.
+DISABLE_COMPFIX="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -39,6 +42,14 @@ zstyle ':omz:update' frequency 14
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
+
+# Only build completion cache once per day
+autoload -Uz compinit
+if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+    compinit
+else
+    compinit -C
+fi
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -216,28 +227,17 @@ cns () {
 }
 
 
-# home server commands
-max-ssh () {
-  ssh max@max-desktop
-}
+# Aliases for eza to replace ls
+alias ls='eza --color=always --group-directories-first --icons'
+alias ll='eza -la --icons --octal-permissions --group-directories-first'
+alias l='eza -bGF --header --git --color=always --group-directories-first --icons'
+alias llm='eza -lbGd --header --git --sort=modified --color=always --group-directories-first --icons' 
+alias la='eza --long --all --group --group-directories-first'
+alias lx='eza -lbhHigUmuSa@ --time-style=long-iso --git --color-scale --color=always --group-directories-first --icons'
 
-max-scp () {
-  server_path=$(echo $PWD | sed "s|$HOME||")
-  server_path="/home/max$server_path"
-  local_path=$(echo $PWD)
-
-  # ensure directory exists to not fail
-  ssh max@max-desktop "mkdir -p $server_path"
-
-  # Generate a list of files tracked by Git
-  git ls-files > git_files.txt
-
-  # Sync only the files listed in git_files.txt
-  rsync -av --files-from=git_files.txt "$local_path" "max@max-desktop:$server_path"
-
-  # Clean up the temporary file
-  rm git_files.txt
-}
+alias lS='eza -1 --color=always --group-directories-first --icons'
+alias lt='eza --tree --level=2 --color=always --group-directories-first --icons'
+alias l.="eza -a | grep -E '^\.'"
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config '~/.config/oh-my-posh/config.omp.json')"
@@ -256,6 +256,10 @@ fi
 # tell uv not to install apple-silicon incompatible versions of python
 export SYSTEM_VERSION_COMPAT=0
 
+# Imagemagick
+export DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix)/lib:$DYLD_FALLBACK_LIBRARY_PATH"
+export SNACKS_GHOSTTY=true
+
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
@@ -264,11 +268,5 @@ export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
 export PATH="/usr/local/bin:$PATH"
 # bun completions
 [ -s "/Users/maxvandijck/.bun/_bun" ] && source "/Users/maxvandijck/.bun/_bun"
-
-source ~/.nvm/nvm.sh
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/maxvandijck/.lmstudio/bin"
 
 . "$HOME/.local/bin/env"

@@ -162,6 +162,7 @@ vim.defer_fn(function()
       'markdown',
       'hcl',
       'toml',
+      'latex',
 
       -- vim related
       'lua',
@@ -231,6 +232,11 @@ local servers = {
   vacuum = {
     cmd = { 'vacuum', 'language-server' },
     filetypes = { 'yaml.openapi' },
+  },
+  markdown_oxide = {
+    cmd = { "markdown-oxide" },
+    filetypes = { "markdown" },
+    root_markers = { ".git", ".obsidian", ".moxide.toml" }
   },
 }
 
